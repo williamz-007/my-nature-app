@@ -3,7 +3,7 @@ export default function Image() {
     { name: "John Doe", image: "/red.jpg" },
     { name: "Jane Smith", image: "/green.jpg" },
     { name: "Mike Johnson", image: "/blue.jpg" },
-    { name: "Sarah Williams", image: "/orange.jpg" },
+    { name: "Sarah Williams", image: "/Orangeeee.jpg" },
   ];
 
   return (

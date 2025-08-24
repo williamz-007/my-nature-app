@@ -8,7 +8,7 @@ export default function ServiceHero() {
     <section className="relative h-120 w-full bg-white">
       {/* Background image using Next.js Image for better performance */}
       <Image
-        src="/mountain.jpg"
+        src="/Mountain.jpg"
         alt="Nature background"
         fill
         className="object-cover"

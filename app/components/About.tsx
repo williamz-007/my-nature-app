@@ -12,8 +12,8 @@ export default function About() {
         Tell website visitors who you are and why they should choose your business.
       </h2>
       <p className="text-lg mb-6 text-gray-600">
-        Because when a visitor first lands on your website, you're a stranger to them. 
-        They have to get to know you in order to want to read your blog posts, subscribe to your email newsletter, or buy what you're selling.
+        Because when a visitor first lands on your website, you&apos;re a stranger to them. 
+        They have to get to know you in order to want to read your blog posts, subscribe to your email newsletter, or buy what you&apos;re selling.
       </p>
       <button className="px-12 py-3 border border-[#4B5320] text-[#4B5320] rounded-lg w-48 hover:bg-[#4B5320]/8 hover:text-[#4B5320]">
         Get Started

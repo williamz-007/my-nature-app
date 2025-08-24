@@ -79,7 +79,7 @@ export default function Form() {
         {/* RIGHT SIDE */}
         <div className="bg-white px-8 flex flex-col gap-8">
           <h3 className="text-4xl font-medium font-serif text-[#4B5320]">
-            Let's Get In Touch
+            Let&apos;s Get In Touch
           </h3>
 
           <form className="flex flex-col gap-4">

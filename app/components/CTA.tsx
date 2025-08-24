@@ -5,7 +5,6 @@ export default function CTA () {
   className="relative bg-cover bg-center bg-no-repeat py-24 flex items-center justify-center text-center"
   style={{ backgroundImage: "url('/jungle.jpg')" }}
 >
-  {/* Overlay */}
   <div className="absolute inset-0 bg-black/50"></div>
 
   {/* Content */}
@@ -14,7 +13,7 @@ export default function CTA () {
       QUESTIONS?
     </h2>
     <p className=" text-lg md:text-xl mb-8">
-      Whether you’re curious about features, a free trial, or even press, we’re here to answer any questions.
+      Whether you&apos;re curious about features, a free trial, or even press, we&apos;re here to answer any questions.
     </p>
      <button className=" px-2 py-3 bg-yellow-300 text-black rounded-lg font-regular w-48 hover:bg-gray-200 hover:text-black">
           Let's Talk Now

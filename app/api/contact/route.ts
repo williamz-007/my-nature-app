@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
 
 // Define the structure of the contact form data
 interface ContactFormData {
@@ -9,47 +7,25 @@ interface ContactFormData {
   message: string;
 }
 
-const SUBMISSIONS_FILE = path.join(process.cwd(), 'data', 'submissions.json');
-
-// Ensure data directory exists
-async function ensureDataDir() {
-  const dataDir = path.dirname(SUBMISSIONS_FILE);
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
-}
-
 type StoredSubmission = ContactFormData & { 
   id: string; 
   timestamp: string; 
 };
 
-// Read submissions from file
-async function readSubmissions(): Promise<StoredSubmission[]> {
-  try {
-    await ensureDataDir();
-    const data = await fs.readFile(SUBMISSIONS_FILE, 'utf8');
-    return JSON.parse(data) as StoredSubmission[];
-  } catch {
-    // If file doesn't exist, return empty array
-    return [];
-  }
-}
-
-// Write submissions to file
-async function writeSubmissions(submissions: StoredSubmission[]) {
-  await ensureDataDir();
-  await fs.writeFile(SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
-}
+// Use environment variable or in-memory storage as fallback
+// In production, this will reset between function calls, but won't crash
+const submissions: StoredSubmission[] = [];
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST request received');
+    
     const body: ContactFormData = await request.json();
+    console.log('Request body:', body);
     
     // Validate required fields
     if (!body.name || !body.email || !body.message) {
+      console.log('Validation failed: missing fields');
       return NextResponse.json(
         { error: 'All fields (name, email, message) are required' },
         { status: 400 }
@@ -59,17 +35,15 @@ export async function POST(request: NextRequest) {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(body.email)) {
+      console.log('Validation failed: invalid email');
       return NextResponse.json(
         { error: 'Please provide a valid email address' },
         { status: 400 }
       );
     }
 
-    // Read existing submissions
-    const submissions = await readSubmissions();
-
     // Create submission with ID and timestamp
-    const submission = {
+    const submission: StoredSubmission = {
       id: Date.now().toString(),
       name: body.name.trim(),
       email: body.email.trim().toLowerCase(),
@@ -77,11 +51,11 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     };
 
-    // Add new submission
-    submissions.push(submission);
+    console.log('Created submission:', submission);
 
-    // Write back to file
-    await writeSubmissions(submissions);
+    // Store the submission in memory
+    submissions.push(submission);
+    console.log('Total submissions:', submissions.length);
 
     return NextResponse.json(
       { 
@@ -94,7 +68,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error processing contact form:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
@@ -102,18 +79,23 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const submissions = await readSubmissions();
+    console.log('GET request received');
+    console.log('Current submissions count:', submissions.length);
     
     return NextResponse.json({
       submissions: submissions.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       ),
-      total: submissions.length
+      total: submissions.length,
+      message: `Retrieved ${submissions.length} submissions`
     });
   } catch (error) {
     console.error('Error fetching submissions:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

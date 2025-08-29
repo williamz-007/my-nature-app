@@ -21,7 +21,7 @@ interface FrontendContact {
 }
 
 // Reusable function to fetch contacts from backend
-export async function fetchContactsFromBackend(): Promise<FrontendContact[]> {
+export async function fetchContactsFromBackend() {
   try {
     const response = await fetch(BACKEND_URL, {
       method: 'GET',
@@ -31,14 +31,13 @@ export async function fetchContactsFromBackend(): Promise<FrontendContact[]> {
     });
 
     if (!response.ok) {
-      console.error('Backend fetch failed with status:', response.status);
       throw new Error(`Backend fetch failed with status: ${response.status}`);
     }
 
     const data: BackendContact[] = await response.json();
     
     // Transform the data to match your component's expected format
-    const transformedData: FrontendContact[] = data.map((item: BackendContact) => ({
+    const transformedData: FrontendContact[] = data.map((item) => ({
       Id: item.id,
       name: item.name,
       email: item.email,
@@ -53,13 +52,12 @@ export async function fetchContactsFromBackend(): Promise<FrontendContact[]> {
   }
 }
 
-// GET handler - fetch all contacts from backend
-export async function GET(request: NextRequest) {
+// GET handler
+export async function GET() {
   try {
     const data = await fetchContactsFromBackend();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error in GET handler:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -67,7 +65,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST handler - submit contact form to backend
+// POST handler
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -90,7 +88,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      console.error('Backend POST failed with status:', response.status);
       return NextResponse.json(
         { error: 'Failed to submit to backend' },
         { status: response.status }
@@ -100,7 +97,6 @@ export async function POST(request: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Error submitting contact form:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

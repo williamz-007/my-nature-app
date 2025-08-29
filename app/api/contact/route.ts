@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 // Define the structure of the contact form data
 interface ContactFormData {
@@ -7,8 +9,35 @@ interface ContactFormData {
   message: string;
 }
 
-// In-memory storage for submissions (replace with database in production)
-const submissions: (ContactFormData & { id: string; timestamp: Date })[] = [];
+const SUBMISSIONS_FILE = path.join(process.cwd(), 'data', 'submissions.json');
+
+// Ensure data directory exists
+async function ensureDataDir() {
+  const dataDir = path.dirname(SUBMISSIONS_FILE);
+  try {
+    await fs.access(dataDir);
+  } catch {
+    await fs.mkdir(dataDir, { recursive: true });
+  }
+}
+
+// Read submissions from file
+async function readSubmissions() {
+  try {
+    await ensureDataDir();
+    const data = await fs.readFile(SUBMISSIONS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    // If file doesn't exist, return empty array
+    return [];
+  }
+}
+
+// Write submissions to file
+async function writeSubmissions(submissions: any[]) {
+  await ensureDataDir();
+  await fs.writeFile(SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,17 +60,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Read existing submissions
+    const submissions = await readSubmissions();
+
     // Create submission with ID and timestamp
     const submission = {
       id: Date.now().toString(),
       name: body.name.trim(),
       email: body.email.trim().toLowerCase(),
       message: body.message.trim(),
-      timestamp: new Date()
+      timestamp: new Date().toISOString()
     };
 
-    // Store the submission
+    // Add new submission
     submissions.push(submission);
+
+    // Write back to file
+    await writeSubmissions(submissions);
 
     return NextResponse.json(
       { 
@@ -62,7 +97,8 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    // Return all submissions (you might want to add pagination)
+    const submissions = await readSubmissions();
+    
     return NextResponse.json({
       submissions: submissions.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()

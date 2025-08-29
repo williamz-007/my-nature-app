@@ -3,8 +3,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = 'https://carousel-hazel.vercel.app/api/contact';
 
+// Type definitions
+interface BackendContact {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+}
+
+interface FrontendContact {
+  Id: string;
+  name: string;
+  email: string;
+  message: string;
+  Createdat: string;
+}
+
 // Reusable function to fetch contacts from backend
-export async function fetchContactsFromBackend() {
+export async function fetchContactsFromBackend(): Promise<FrontendContact[]> {
   try {
     const response = await fetch(BACKEND_URL, {
       method: 'GET',
@@ -18,10 +35,10 @@ export async function fetchContactsFromBackend() {
       throw new Error(`Backend fetch failed with status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: BackendContact[] = await response.json();
     
     // Transform the data to match your component's expected format
-    const transformedData = data.map((item: any) => ({
+    const transformedData: FrontendContact[] = data.map((item: BackendContact) => ({
       Id: item.id,
       name: item.name,
       email: item.email,

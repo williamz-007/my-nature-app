@@ -2,53 +2,22 @@
 import React from "react";
 import SubmissionHero from "./components/SubsmissionHero";
 import AllCards from "./components/AllCards";
+import { fetchContactsFromBackend } from "../api/contacts/route";
 
-type APISubmission = {
-  id: string;
+type Submission = {
+  Id: string;
   name: string;
   email: string;
   message: string;
-  timestamp: string;
+  Createdat: string;
 };
 
-type APIResponse = {
-  submissions: APISubmission[];
-  total: number;
-};
-
-async function getSubmissions() {
+async function getSubmissions(): Promise<Submission[]> {
   try {
-    // Use relative URL for local development, or process.env for production
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://carousel-hazel.vercel.app' 
-      : 'http://localhost:3000';
-    
-    const res = await fetch(`${baseUrl}/api/contact`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      console.error("Fetch failed with status:", res.status);
-      return [];
-    }
-
-    const data: APIResponse = await res.json();
-    console.log("API response:", data); // Debug log
-    
-    // The API returns { submissions: [...], total: number }
-    const submissions = data.submissions || [];
-    
-    // Transform the data to match AllCards expected format
-    return submissions.map((submission: APISubmission) => ({
-      id: submission.id,
-      name: submission.name,
-      email: submission.email,
-      message: submission.message,
-      createdAt: submission.timestamp // Map timestamp to createdAt
-    }));
-    
+    // Use the imported function directly for server-side rendering
+    const submissions = await fetchContactsFromBackend();
+    console.log("Fetched submissions:", submissions); // Debug log
+    return submissions;
   } catch (error) {
     console.error("Error fetching submissions:", error);
     return [];
@@ -60,7 +29,7 @@ export default async function SubmissionPage() {
 
   return (
     <main>
-        <SubmissionHero />
+      <SubmissionHero />
       <h1 className="text-2xl font-bold mb-8 max-w-6xl mx-auto pt-12">
         User Submissions ({submissions.length})
       </h1>

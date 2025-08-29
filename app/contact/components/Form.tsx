@@ -52,7 +52,8 @@ export default function Form() {
     try {
       console.log('Submitting form data:', formData);
       
-      const response = await fetch('/api/contact', {
+      // Use the correct API endpoint that matches our route
+      const response = await fetch('/api/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +80,7 @@ export default function Form() {
           console.log('Non-JSON response:', text);
           setSubmitStatus({
             type: 'error',
-            message: `API Error (${response.status}): Make sure /api/contact/route.ts exists`
+            message: `API Error (${response.status}): Make sure /api/contacts/route.ts exists`
           });
         }
         return;

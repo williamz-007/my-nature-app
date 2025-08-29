@@ -21,20 +21,25 @@ async function ensureDataDir() {
   }
 }
 
+type StoredSubmission = ContactFormData & { 
+  id: string; 
+  timestamp: string; 
+};
+
 // Read submissions from file
-async function readSubmissions() {
+async function readSubmissions(): Promise<StoredSubmission[]> {
   try {
     await ensureDataDir();
     const data = await fs.readFile(SUBMISSIONS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
+    return JSON.parse(data) as StoredSubmission[];
+  } catch {
     // If file doesn't exist, return empty array
     return [];
   }
 }
 
 // Write submissions to file
-async function writeSubmissions(submissions: any[]) {
+async function writeSubmissions(submissions: StoredSubmission[]) {
   await ensureDataDir();
   await fs.writeFile(SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
 }

@@ -1,4 +1,116 @@
+'use client';
+
+import { useState } from 'react';
+
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
 export default function Form() {
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    message: ''
+  });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear status when user starts typing
+    if (submitStatus.type) {
+      setSubmitStatus({ type: null, message: '' });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Basic client-side validation
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Please fill in all fields.'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: '' });
+
+    try {
+      console.log('Submitting form data:', formData);
+      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
+      if (!response.ok) {
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const result = await response.json();
+          console.log('Error response:', result);
+          setSubmitStatus({
+            type: 'error',
+            message: result.error || `HTTP Error: ${response.status}`
+          });
+        } else {
+          // Not JSON response, likely 404 or server error
+          const text = await response.text();
+          console.log('Non-JSON response:', text);
+          setSubmitStatus({
+            type: 'error',
+            message: `API Error (${response.status}): Make sure /api/contact/route.ts exists`
+          });
+        }
+        return;
+      }
+
+      const result = await response.json();
+      console.log('Success response:', result);
+
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you! Your message has been sent successfully.'
+      });
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        message: ''
+      });
+
+    } catch (error) {
+      console.error('Network/Parse error:', error);
+      setSubmitStatus({
+        type: 'error',
+        message: `Network error: ${error instanceof Error ? error.message : 'Unknown error'}. Check console for details.`
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section className="w-full bg-white py-40 item-start justify-start ">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 px-6">
@@ -82,32 +194,60 @@ export default function Form() {
             Let&apos;s Get In Touch
           </h3>
 
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             {/* Name */}
             <input
               type="text"
+              name="name"
               placeholder="Your Name"
-              className=" border-b-1 border-gray-300 py-3 focus:outline-none focus:border-yellow-500 placeholder-gray-400"
+              value={formData.name}
+              onChange={handleChange}
+              disabled={isSubmitting}
+              className="border-b-1 border-gray-300 py-3 focus:outline-none focus:border-yellow-500 placeholder-gray-400"
             />
             {/* Email */}
             <input
               type="email"
+              name="email"
               placeholder="Your Email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={isSubmitting}
               className="border-b-1 border-gray-300 py-3 focus:outline-none focus:border-yellow-500 placeholder-gray-400"
             />
             {/* Message */}
             <textarea
               rows={4}
+              name="message"
               placeholder="Your Message"
+              value={formData.message}
+              onChange={handleChange}
+              disabled={isSubmitting}
               className="border-b-1 border-gray-300 py-3 focus:outline-none focus:border-yellow-500 placeholder-gray-400"
             ></textarea>
+            
+            {/* Status Message */}
+            {submitStatus.type && (
+              <div className={`p-3 rounded-lg text-sm ${
+                submitStatus.type === 'success' 
+                  ? 'bg-green-50 text-green-800 border border-green-200' 
+                  : 'bg-red-50 text-red-800 border border-red-200'
+              }`}>
+                {submitStatus.message}
+              </div>
+            )}
             
             {/* Button */}
             <button
               type="submit"
-              className="mt-2 bg-yellow-300 text-[#4B5320] font-medium py-4 rounded-lg hover:bg-yellow-400/40 transition w-fit px-8 text-sm font"
+              disabled={isSubmitting}
+              className={`mt-2 font-medium py-4 rounded-lg transition w-fit px-8 text-sm ${
+                isSubmitting 
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-yellow-300 text-[#4B5320] hover:bg-yellow-400/40'
+              }`}
             >
-              Send Message
+              {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </div>

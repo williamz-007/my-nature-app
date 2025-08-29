@@ -3,12 +3,12 @@ import React from "react";
 import Header from "@/components/Header";
 import Image from "next/image";
 
-export default function ContactHero() {
+export default function SubmissionHero() {
   return (
     <section className="relative h-120 w-full bg-white">
       {/* Background image using Next.js Image for better performance */}
       <Image
-        src="/nat.jpg"
+        src="/sub.jpg"
         alt="Nature background"
         fill
         className="object-cover"
@@ -24,7 +24,7 @@ export default function ContactHero() {
       <div className="relative z-20 flex flex-col justify-center items-center text-center h-full px-6">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl text-white font-medium mb-4 tracking-wide">
-            Contact Us
+            Submissions
           </h1>
         </div>
         

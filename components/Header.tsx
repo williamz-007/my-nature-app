@@ -38,6 +38,7 @@ export default function Header() {
               <Link href="/about" className="hover:underline text-white hover:text-gray-200">About</Link>
               <Link href="/services" className="hover:underline text-white hover:text-gray-200">Services</Link>
               <Link href="/contact" className="hover:underline text-white hover:text-gray-200">Contact</Link>
+              <Link href="/submission" className="hover:underline text-white hover:text-gray-200">Submission</Link>
             </nav>
             <button className="border border-white text-white px-8 py-2 rounded-lg font-medium hover:bg-white/10">
               Get Started
@@ -75,6 +76,7 @@ export default function Header() {
             <Link href="/about" className="hover:underline text-white hover:text-gray-200">About</Link>
             <Link href="/services" className="hover:underline text-white hover:text-gray-200">Services</Link>
             <Link href="/contact" className="hover:underline text-white hover:text-gray-200">Contact</Link>
+            <Link href="/submission" className="hover:underline text-white hover:text-gray-200">Submission</Link>
           </nav>
           <button className="border border-white text-white px-8 py-2 rounded-lg font-medium hover:bg-white/10">
             Get Started
@@ -106,6 +108,7 @@ export default function Header() {
             <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
             <Link href="/services" onClick={() => setMenuOpen(false)}>Services</Link>
             <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+            <Link href="/submission" onClick={() => setMenuOpen(false)}>Submission</Link>
           </nav>
           <button className="mt-6 border border-white text-white px-8 py-2 rounded-lg font-medium hover:bg-white/10">
             Get Started

@@ -3,6 +3,18 @@ import React from "react";
 import SubmissionHero from "./components/SubsmissionHero";
 import AllCards from "./components/AllCards";
 
+type APISubmission = {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  timestamp: string;
+};
+
+type APIResponse = {
+  submissions: APISubmission[];
+  total: number;
+};
 
 async function getSubmissions() {
   try {
@@ -22,14 +34,14 @@ async function getSubmissions() {
       return [];
     }
 
-    const data = await res.json();
+    const data: APIResponse = await res.json();
     console.log("API response:", data); // Debug log
     
     // The API returns { submissions: [...], total: number }
     const submissions = data.submissions || [];
     
     // Transform the data to match AllCards expected format
-    return submissions.map((submission: any) => ({
+    return submissions.map((submission: APISubmission) => ({
       id: submission.id,
       name: submission.name,
       email: submission.email,

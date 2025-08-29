@@ -8,7 +8,7 @@ interface ContactFormData {
 }
 
 // In-memory storage for submissions (replace with database in production)
-let submissions: (ContactFormData & { id: string; timestamp: Date })[] = [];
+const submissions: (ContactFormData & { id: string; timestamp: Date })[] = [];
 
 export async function POST(request: NextRequest) {
   try {

@@ -56,7 +56,7 @@ export async function fetchContactsFromBackend(): Promise<FrontendContact[]> {
 }
 
 // GET handler - fetch all contacts from backend
-export async function GET(request: NextRequest) {
+export async function GET(): Promise<NextResponse> {
   try {
     const data = await fetchContactsFromBackend();
     return NextResponse.json(data);
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST handler - submit contact form to backend
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
     const { name, email, message } = body;

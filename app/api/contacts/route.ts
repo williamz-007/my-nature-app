@@ -3,63 +3,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = 'https://carousel-hazel.vercel.app/api/contact';
 
-// Type definitions
-interface BackendContact {
-  id: string;
-  name: string;
-  email: string;
-  message: string;
-  createdAt: string;
-}
-
-interface FrontendContact {
-  Id: string;
-  name: string;
-  email: string;
-  message: string;
-  Createdat: string;
-}
-
-// Reusable function to fetch contacts from backend
-export async function fetchContactsFromBackend(): Promise<FrontendContact[]> {
+// GET handler - fetch all contacts from backend
+export async function GET() {
   try {
     const response = await fetch(BACKEND_URL, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Add cache control to ensure fresh data
-      cache: 'no-store'
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store', 
     });
 
     if (!response.ok) {
       console.error('Backend fetch failed with status:', response.status);
-      throw new Error(`Backend fetch failed with status: ${response.status}`);
+      return NextResponse.json(
+        { error: `Backend fetch failed with status: ${response.status}` },
+        { status: response.status }
+      );
     }
 
-    const data: BackendContact[] = await response.json();
-   
-    // Transform the data to match your component's expected format
-    const transformedData: FrontendContact[] = data.map((item: BackendContact) => ({
-      Id: item.id,
-      name: item.name,
-      email: item.email,
-      message: item.message,
-      Createdat: item.createdAt
-    }));
-
-    return transformedData;
-  } catch (error) {
-    console.error('Error fetching contacts:', error);
-    throw error;
-  }
-}
-
-// GET handler - fetch all contacts from backend
-export async function GET(): Promise<NextResponse> {
-  try {
-    const data = await fetchContactsFromBackend();
-    return NextResponse.json(data);
+    const data = await response.json();
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
     console.error('Error in GET handler:', error);
     return NextResponse.json(
@@ -70,7 +32,7 @@ export async function GET(): Promise<NextResponse> {
 }
 
 // POST handler - submit contact form to backend
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, email, message } = body;
@@ -94,9 +56,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const response = await fetch(BACKEND_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, message }),
     });
 
@@ -104,7 +64,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       console.error('Backend POST failed with status:', response.status);
       const errorText = await response.text();
       console.error('Backend error response:', errorText);
-      
+
       return NextResponse.json(
         { error: 'Failed to submit to backend' },
         { status: response.status }

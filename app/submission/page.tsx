@@ -25,21 +25,36 @@ export default function SubmissionPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch('/api/contacts', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store'
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
       });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch contacts: ${response.status}`);
       }
 
-      const data: Contact[] = await response.json();
-      setContacts(data);
+      // Raw backend data
+      const rawData: {
+        id: string;
+        name: string;
+        email: string;
+        message: string;
+        createdAt: string;
+      }[] = await response.json();
+
+      // Transform into frontend-friendly format
+      const transformed: Contact[] = rawData.map((item) => ({
+        Id: item.id,
+        name: item.name,
+        email: item.email,
+        message: item.message,
+        Createdat: item.createdAt,
+      }));
+
+      setContacts(transformed);
     } catch (err) {
       console.error('Error fetching contacts:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -55,7 +70,7 @@ export default function SubmissionPage() {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch {
       return dateString;
@@ -154,7 +169,7 @@ export default function SubmissionPage() {
                         {formatDate(contact.Createdat)}
                       </span>
                     </div>
-                    
+
                     <div className="mb-3">
                       <p className="text-sm text-gray-600 font-medium">Email:</p>
                       <p className="text-blue-600 hover:text-blue-800 transition-colors break-all">
@@ -175,9 +190,7 @@ export default function SubmissionPage() {
                   </div>
 
                   <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
-                    <p className="text-xs text-gray-500">
-                      ID: {contact.Id}
-                    </p>
+                    <p className="text-xs text-gray-500">ID: {contact.Id}</p>
                   </div>
                 </div>
               ))}

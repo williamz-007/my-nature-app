@@ -1,82 +1,32 @@
 // app/api/contacts/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = 'https://carousel-hazel.vercel.app/api/contact';
+const BACKEND_URL = "https://carousel-hazel.vercel.app/api/contact";
 
-// GET handler - fetch all contacts from backend
+// GET handler
 export async function GET() {
   try {
-    const response = await fetch(BACKEND_URL, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store', 
-    });
+    const response = await fetch(BACKEND_URL, { method: "GET" });
 
     if (!response.ok) {
-      console.error('Backend fetch failed with status:', response.status);
+      const text = await response.text();
+      console.error("Backend error:", text);
       return NextResponse.json(
-        { error: `Backend fetch failed with status: ${response.status}` },
+        { error: "Failed to fetch contact submissions" },
         { status: response.status }
       );
     }
 
     const data = await response.json();
-    return NextResponse.json(data, { status: 200 });
-  } catch (error) {
-    console.error('Error in GET handler:', error);
+
+    // Ensure it's always an array
+    const contacts = Array.isArray(data) ? data : data.data || [];
+
+    return NextResponse.json(contacts, { status: 200 });
+  } catch (err) {
+    console.error("GET /contacts error:", err);
     return NextResponse.json(
-      { error: 'Failed to fetch contacts from backend' },
-      { status: 500 }
-    );
-  }
-}
-
-// POST handler - submit contact form to backend
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { name, email, message } = body;
-
-    // Basic validation
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: 'Name, email, and message are required' },
-        { status: 400 }
-      );
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
-
-    const response = await fetch(BACKEND_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, message }),
-    });
-
-    if (!response.ok) {
-      console.error('Backend POST failed with status:', response.status);
-      const errorText = await response.text();
-      console.error('Backend error response:', errorText);
-
-      return NextResponse.json(
-        { error: 'Failed to submit to backend' },
-        { status: response.status }
-      );
-    }
-
-    const data = await response.json();
-    return NextResponse.json(data, { status: 201 });
-  } catch (error) {
-    console.error('Error submitting contact form:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Unable to connect to backend" },
       { status: 500 }
     );
   }

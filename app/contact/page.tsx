@@ -4,7 +4,7 @@ import Form from "./components/Form";
 import Image from "./components/Image";
 import Footer from "../../components/Footer";
 
-export default function About() {
+export default function contact() {
   return (
     <main>
       <ContactHero />

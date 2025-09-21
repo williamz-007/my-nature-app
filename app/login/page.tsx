@@ -48,7 +48,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="max-w-md mx-auto py-4 mt-16 px-32 sm:px-0">
+    <main className="max-w-md mx-auto py-4 mt-16 px-6 sm:px-0">
         <div className="flex justify-center">
     <img
       src="/natural789.png"

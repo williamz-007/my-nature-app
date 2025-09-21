@@ -6,11 +6,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Define user type to fix TypeScript error
+interface User {
+  id: string;
+  name?: string;
+  email: string;
+  createdAt?: string;
+  loginAt?: string;
+}
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null); // Fixed: Changed from any to User | null
   const router = useRouter();
 
   // Check authentication status

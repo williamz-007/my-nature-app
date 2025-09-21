@@ -39,7 +39,7 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="max-w-md mx-auto py-4 mt-16">
+    <main className="max-w-md mx-auto py-4 mt-16 sm:px-60 md:px-0">
       {/* Logo */}
       <div className="flex justify-center">
         <img

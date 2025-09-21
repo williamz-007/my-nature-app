@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // ✅ Add this import
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter(); // ✅ Add this hook
+  const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
 
@@ -26,7 +26,6 @@ export default function LoginPage() {
       const data = await res.json();
       
       if (res.ok) {
-        // ✅ Store user data and token in localStorage
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
         }
@@ -36,9 +35,8 @@ export default function LoginPage() {
         
         setMessage("✅ Login successful! Redirecting...");
         
-        // ✅ Redirect to home page after successful login
         setTimeout(() => {
-          router.push("/"); // This takes you back to the main website
+          router.push("/");
         }, 1000);
       } else {
         setMessage(data.error || "Login failed");
@@ -50,7 +48,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="max-w-md mx-auto py-4 mt-16 sm:px-60 md:px-0">
+    <main className="max-w-md mx-auto py-4 mt-16 px-32 sm:px-0">
         <div className="flex justify-center">
     <img
       src="/natural789.png"
@@ -62,7 +60,7 @@ export default function LoginPage() {
     <div className="max-w-md mx-auto mt-6">
     <div className="gap-2">
     <h1 className="text-2xl font-semibold mb-6 w-full text-center leading-0">Login</h1>
-    <h5 className="text-sm font-regular mb-6 w-full text-center text-gray-500">Get back right into your account to explore</h5>
+    <h5 className="text-lg font-regular mb-6 w-full text-center text-gray-500">Get back right into your account to explore</h5>
     </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         <input 
@@ -94,7 +92,7 @@ export default function LoginPage() {
       )}
     </div>
 
-    <p className="text-m text-center text-gray-600 mt-8 ">
+    <p className="text-lg text-center text-gray-600 mt-8 ">
          Don&#39;t have an account?{" "}
            <Link
             href="/signup"

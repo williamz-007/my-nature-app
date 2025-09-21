@@ -39,7 +39,7 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="max-w-md mx-auto py-4 mt-16 sm:px-60 md:px-0">
+    <main className="max-w-md mx-auto py-4 mt-16 px-32 sm:px-0">
       {/* Logo */}
       <div className="flex justify-center">
         <img
@@ -53,7 +53,7 @@ export default function SignupPage() {
       <div className="max-w-md mx-auto mt-6">
         <div className="gap-2">
           <h1 className="text-2xl font-semibold mb-2 text-center">Signup</h1>
-          <h5 className="text-sm mb-6 text-center text-gray-500">
+          <h5 className="text-lg mb-6 text-center text-gray-500">
             Create an account and enjoy nature in its finest
           </h5>
         </div>
@@ -94,7 +94,7 @@ export default function SignupPage() {
       </div>
 
       {/* Login redirect */}
-      <p className="text-sm text-center text-gray-600 mt-8">
+      <p className="text-lg text-center text-gray-600 mt-8">
         Already have an account?{" "}
         <Link
           href="/login"
